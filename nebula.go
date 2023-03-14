@@ -3,8 +3,6 @@
 package nebula
 
 import (
-	"context"
-
 	"github.com/sirupsen/logrus"
 	"github.com/slackhq/nebula"
 	"github.com/slackhq/nebula/config"
@@ -15,16 +13,14 @@ type Configer interface {
 }
 
 type Client struct {
-	ctx context.Context
-
 	ctrl *nebula.Control
 	cfg  *config.C
 
 	node Configer
 }
 
-func NewClient(ctx context.Context) *Client {
-	return &Client{ctx: ctx}
+func NewClient() *Client {
+	return &Client{}
 }
 
 func (c *Client) Reload(cf Configer) error {
