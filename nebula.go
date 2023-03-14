@@ -10,7 +10,7 @@ import (
 	"github.com/slackhq/nebula/config"
 )
 
-type Node interface {
+type Configer interface {
 	config() ([]byte, error)
 }
 
@@ -20,15 +20,15 @@ type Client struct {
 	ctrl *nebula.Control
 	cfg  *config.C
 
-	node Node
+	node Configer
 }
 
 func NewClient(ctx context.Context) *Client {
 	return &Client{ctx: ctx}
 }
 
-func (c *Client) Reload(node Node) error {
-	c.node = node
+func (c *Client) Reload(cf Configer) error {
+	c.node = cf
 
 	ymlstr, err := c.node.config()
 	if err != nil {
@@ -38,8 +38,8 @@ func (c *Client) Reload(node Node) error {
 	return c.cfg.ReloadConfigString(string(ymlstr))
 }
 
-func (c *Client) Start(node Node) error {
-	c.node = node
+func (c *Client) Start(cfg Configer) error {
+	c.node = cfg
 
 	conf, err := c.node.config()
 	if err != nil {
