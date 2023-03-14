@@ -40,7 +40,7 @@ func (l *Lighthouse) Cert() (*cert.NebulaCertificate, error) {
 	return c, nil
 }
 
-func (l *Lighthouse) UpdateNodeCredentials(priv, cert []byte) {
+func (l *Lighthouse) UpdateCredentials(priv, cert []byte) {
 	l.m.Lock()
 	defer l.m.Unlock()
 

@@ -1,6 +1,11 @@
 package nebula
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/slackhq/nebula/cert"
+	"gopkg.in/yaml.v2"
+)
 
 type Node struct {
 	m   sync.Mutex
@@ -24,4 +29,31 @@ func NewNode(priv, cert, ca []byte, opts ...Option) *Node {
 	}
 
 	return l
+}
+func (n *Node) Cert() (*cert.NebulaCertificate, error) {
+	c, _, err := cert.UnmarshalNebulaCertificateFromPEM([]byte(n.cfg.PKI.Cert))
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+func (n *Node) UpdateCredentials(priv, cert []byte) {
+	n.m.Lock()
+	defer n.m.Unlock()
+
+	n.cfg.PKI.Key = string(priv)
+	n.cfg.PKI.Cert = string(cert)
+}
+
+func (l *Node) UpdateCA(crt []byte) {
+	l.m.Lock()
+	defer l.m.Unlock()
+
+	l.cfg.PKI.CA = string(crt)
+}
+
+func (n *Node) config() ([]byte, error) {
+	return yaml.Marshal(n.cfg)
 }
