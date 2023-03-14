@@ -65,6 +65,8 @@ type yamlConfig struct {
 func defaultConfig() *yamlConfig {
 	y := &yamlConfig{}
 
+	y.StaticHostMap = make(map[string][]string)
+
 	y.Lighthouse.AmLighthouse = false
 	y.Lighthouse.Interval = 60
 	y.Listen.Host = "0.0.0.0"
