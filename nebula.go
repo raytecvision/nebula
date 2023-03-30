@@ -12,15 +12,23 @@ type Configer interface {
 	config() ([]byte, error)
 }
 
-type Client struct {
-	ctrl *nebula.Control
-	cfg  *config.C
+type ClientOption func(*Client)
 
-	node Configer
+type Client struct {
+	ctrl    *nebula.Control
+	cfg     *config.C
+	logger  *logrus.Logger
+	version string
+	node    Configer
 }
 
-func NewClient() *Client {
-	return &Client{}
+func NewClient(opts ...ClientOption) *Client {
+	c := &Client{logger: logrus.StandardLogger(), version: "raytecvision-nebula-client"}
+	for _, o := range opts {
+		o(c)
+	}
+
+	return c
 }
 
 func (c *Client) Reload(cf Configer) error {
@@ -48,7 +56,7 @@ func (c *Client) Start(cfg Configer) error {
 		return err
 	}
 
-	c.ctrl, err = nebula.Main(c.cfg, false, "raytecvision-nebula-client", logrus.StandardLogger(), nil)
+	c.ctrl, err = nebula.Main(c.cfg, false, c.version, c.logger, nil)
 	if err != nil {
 		return err
 	}
