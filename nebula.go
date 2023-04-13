@@ -68,5 +68,7 @@ func (c *Client) Start(cfg Configer) error {
 
 func (r *Client) Stop() {
 	// stop nebula client
-	r.ctrl.Stop()
+	if r.ctrl != nil {
+		r.ctrl.Stop()
+	}
 }
